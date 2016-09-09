@@ -413,13 +413,13 @@ public class AudioPlayerModule extends ReactContextBaseJavaModule implements Med
         } else {
             data.putString("message", "Playback completed");
             emitEvent(playerId, "ended", data);
+            stopTask();
         }
 
         if (!this.looping && this.playerAutoDestroy.get(playerId)) {
             Log.d(LOG_TAG, "onCompletion(): Autodestroying player...");
             destroy(playerId);
         }
-        stopTask();
     }
 
     @Override
