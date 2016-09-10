@@ -180,6 +180,7 @@ RCT_EXPORT_METHOD(prepare:(nonnull NSNumber*)playerId
 
 RCT_EXPORT_METHOD(destroy:(nonnull NSNumber*)playerId withCallback:(RCTResponseSenderBlock)callback) {
     [self destroyPlayerWithId:playerId];
+    [self stopProgressTimer];
     callback(@[[NSNull null]]);
 }
 
@@ -269,6 +270,7 @@ RCT_EXPORT_METHOD(stop:(nonnull NSNumber*)playerId withCallback:(RCTResponseSend
     }
     
     [player pause];
+    [self stopProgressTimer];
     if (player.autoDestroy) {
         [self destroyPlayerWithId:playerId];
     } else {
@@ -290,7 +292,7 @@ RCT_EXPORT_METHOD(pause:(nonnull NSNumber*)playerId withCallback:(RCTResponseSen
     }
     
     [player pause];
-
+    [self stopProgressTimer];
     callback(@[[NSNull null], @{@"duration": @(CMTimeGetSeconds(player.currentItem.asset.duration) * 1000),
                                 @"position": @(CMTimeGetSeconds(player.currentTime) * 1000)}]);
 }
@@ -322,6 +324,7 @@ RCT_EXPORT_METHOD(resume:(nonnull NSNumber*)playerId withCallback:(RCTResponseSe
             return;
         }];
     }
+    [self stopProgressTimer];
     if (player.looping && player) {
         // Send looping event and start playing again
         NSString *eventName = [NSString stringWithFormat:@"RCTAudioPlayerEvent:%@", playerId];
